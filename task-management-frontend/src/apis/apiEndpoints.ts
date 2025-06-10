@@ -1,5 +1,5 @@
 export const API_BASE_URL: string =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3000";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3001";
 
 export const API_ENDPOINTS = {
   socket: `${API_BASE_URL}`,
