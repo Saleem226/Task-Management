@@ -9,8 +9,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*',
-    credentials: true,
+    origin: '*',
   });
   await app.listen(process.env.PORT ?? 3000);
 }
