@@ -1,32 +1,41 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigService } from '@nestjs/config';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService, ConfigModule } from '@nestjs/config';
 import { User } from 'src/users/user.entity';
 import { Task } from 'src/task/task.entity';
 
 @Module({
   imports: [
     ConfigModule,
-
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (config: ConfigService) => ({
-        entities: [User, Task],
-        type: 'postgres',
-        host: config.get('database.postgres.host'),
-        port: config.get<number>('database.postgres.port'),
-        username: config.get('database.postgres.username'),
-        password: config.get('database.postgres.password'),
-        database: config.get('database.postgres.db'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
+      useFactory: (config: ConfigService) => {
+        const postgresUrl = config.get<string>('POSTGRES_URL');
+        if (postgresUrl) {
+          return {
+            type: 'postgres',
+            url: postgresUrl,
+            entities: [User, Task],
+            synchronize: true,
+          };
+        }
+        return {
+          type: 'postgres',
+          host: config.get('POSTGRES_HOST'),
+          port: config.get<number>('POSTGRES_PORT'),
+          username: config.get('POSTGRES_USER'),
+          password: config.get('POSTGRES_PASSWORD'),
+          database: config.get('POSTGRES_DB'),
+          entities: [User, Task],
+          autoLoadEntities: true,
+          synchronize: true,
+        };
+      },
       inject: [ConfigService],
     }),
 
-    // MongoDB Setup
+    // MongoDB Setup remains unchanged
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
